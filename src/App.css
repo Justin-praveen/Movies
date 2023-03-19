@@ -1,0 +1,63 @@
+
+.a{
+text-align: center !important;
+}
+.c{
+    text-align: center !important;
+}
+.ab{
+    text-align: center !important;
+    margin-top: 10px;
+
+}
+
+
+.cb{
+    background-color:red;
+    align-items: flex-end;
+
+}
+
+.chm{
+    margin-bottom: -20px !important;
+}
+.hh{
+    height: 85% !important;
+}
+.attributes{
+    text-align: center;
+}
+.butt{
+    border-radius: 20px !important;
+}
+.im{
+  
+    z-index: -10 !important;
+}
+.ch{
+    height: 100% !important;
+    
+}
+.mfull{
+    background-color: black;
+}
+.mfullcar{
+    background-color: black;
+
+    box-shadow: black 10px 10px 30px 10px !important;
+    opacity: 0.9 !important;
+}
+.ffonts {
+    color: white !important;
+}
+.lol{
+    box-shadow: black inset 1px 1px 100px 10px !important;
+    border-radius: 20px;
+    padding: 2px;
+   
+}
+
+.mfullcar :hover + .lol {
+   display: none !important;
+
+}
