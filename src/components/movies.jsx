@@ -1,157 +1,256 @@
-import Figure from 'react-bootstrap/Figure';
-import axios from 'axios';
-import { useEffect, useState, useTransition } from 'react';
-import { Button, Card, Col, Form, Row } from 'react-bootstrap';
-import {SlLike} from "react-icons/sl"
-import {AiOutlineHeart} from "react-icons/ai"
-import {FiShare2} from "react-icons/fi"
-import {CiPlay1} from "react-icons/ci"
-import Select from 'react-select';
+import {
+  useCallback,
+  useDeferredValue,
+  useEffect,
+  useState,
+  useTransition,
+} from "react";
+import { Button, Card, Col, Form, Row, Spinner } from "react-bootstrap";
+import { SlLike } from "react-icons/sl";
+import { AiOutlineHeart } from "react-icons/ai";
+import { FiShare2 } from "react-icons/fi";
+import { CiPlay1 } from "react-icons/ci";
+import Select from "react-select";
+import Modals from "./Modal";
+import { Servises } from "../Axios/Axios";
 
 function MoviesFigure() {
+  const [list, setlist] = useState([]);
+  const diff = useDeferredValue(list);
+  const [modalstate, setmodalstate] = useState(0);
+  const [Geniriclist, setgeniriclist] = useState([]);
+  const [Geniric, setgeniric] = useState(28);
+  const [ispending, setpending] = useTransition();
+  const [search, setSearch] = useState("");
+  const [videos, setvideo] = useState("NOpe");
 
-    const [list,setlist] = useState([])
-    const [pending,setpending] = useTransition()
+  const [show, setshow] = useState(false);
 
+  const handleClose = () => {
+    setshow(!show);
+  };
 
-    const options = [
-        { value: 'chocolate', label: 'Chocolate' },
-        { value: 'strawberry', label: 'Strawberry' },
-        { value: 'vanilla', label: 'Vanilla' }
-      ]
-      
-
-
-    useEffect(()=>{
-       (
-        async()=>{
-            let {data} = await axios.get('https://api.themoviedb.org/3/discover/movie', {
-                params: {
-                    api_key: '1e448e0dfcdbb565f5d329820065b4d2',
-                    language: 'en-US',
-                    sort_by: 'popularity.desc',
-                    include_adult: false,
-                    include_video: false,
-                    page: 1,
-                    with_genres: 28,
-                    with_watch_monetization_types:"flatrate"
-                }
-
-            })
-
-            console.log(data.results
-                )
-
-            setpending(()=>{
-                setlist(data.results)
-            })
-        }
-       )()
-
-    },[])
-
-
-
-    return (
-
-       <Row >
-
+  const Movies = useCallback(
+    () => (
+      <>
         <Row>
-            <Col lg={6}>
-            <Select options={options} />
-            </Col>
-            <Col>
-            <Form.Control>
-
-</Form.Control>
-            </Col>
+          <iframe
+            width="700"
+            height="345"
+            src={`https://www.youtube.com/embed/${videos}?autoplay=1&controls=1`}
+            frameborder="0" allowfullscreen
+          ></iframe>
         </Row>
-        
-        {
-        list.length !== 0 ? 
-        
-        // Card -Start
-        (<Row className='m-3'>{list.map((items,key) => {
-            return (
-               <>
+      </>
+    ),
+    [videos]
+  );
 
-<Card className='m-2 mfull p-5'>
-<Row>
+  const MoviesDetails = useCallback(
+    () => (
+      <>
+        <Row>
+          <h1>Details will be done</h1>
+        </Row>
+      </>
+    ),
+    [modalstate]
+  );
 
+  useEffect(() => {
+    (async () => {
+      if (search !== "") {
+        let { data } = await Servises.Searchlist(search);
 
-<Col lg="4" sm="6" className='ch mb-4'>
-        
+        console.log(data.results);
+        setpending(() => {
+          setlist(data.results);
+        });
+      }
+    })();
+  }, [search]);
 
+  useEffect(() => {
+    (async () => {
+      let { data } = await Servises.geniric(Geniric);
 
-        <Card className='h-100 p-0 mfullcar'>
-    <Card.Img  className='h-100' src={`https://image.tmdb.org/t/p/original${items.backdrop_path}`} alt="Card image" />
+      console.log(data.results);
+      setpending(() => {
+        setlist(data.results);
+      });
+    })();
+  }, [Geniric]);
 
-    <Card.ImgOverlay>
-  
-    <Row className='hh' >
+  useEffect(() => {
+    (async () => {
+      let { data } = await Servises.list();
 
- 
-        
-        
-{/* 1 */}
-<Col lg="12 d-flex justify-content-center  ca align-items-center" >
-<Button pill className='butt'><CiPlay1/></Button>
+      const geners = data.genres.map((items) => {
+        return {
+          label: items.name,
+          value: items.id,
+        };
+      });
 
-</Col>
+      console.log(geners);
 
-{/* 2 */}
-</Row>
-<Row className='lol'>
-<Col lg="4" className='attributes'>
-    <h4 className='ffonts'><SlLike/><span><h6>{items.vote_count}</h6></span></h4>
-</Col>
-<Col lg="4" className='attributes'>
-<h4 className='ffonts'><AiOutlineHeart/></h4>
-</Col>
-<Col lg="4" className='attributes'>
-<h4 className='ffonts'><FiShare2/> </h4>
-</Col>
-</Row>
-      </Card.ImgOverlay>
-    </Card>
-        
-     
-        </Col>
+      setpending(() => {
+        setgeniriclist(geners);
+      });
+    })();
+  }, []);
 
-{/* 1 */}
-  
+  return (
+    <>
+      <Row>
+        <Row className="d-flex justify-content-between">
+          <Col lg={4} className="ms-4 ">
+            <Select
+              options={Geniriclist}
+              placeholder="Geners"
+              onChange={(data) => {
+                setgeniric(data.value);
+              }}
+            />
+          </Col>
+          <Col lg={4} className="ms-5">
+            <Form.Control
+              placeholder="Search"
+              onChange={(event) => {
+                setSearch(event.target.value);
+              }}
+            ></Form.Control>
+          </Col>
+        </Row>
 
-    {/* 2 */}
-              <Col lg="8" sm="6">
-                  <Row className='p-4'>
-                    <Col className='ab' lg="12">
-                    <h1 className='ffonts'>{items.original_title}</h1>
-                    </Col>
-                    <Col className='ab' lg="12">
-                    <p className='ffonts'> {items.overview}</p>
-                    </Col>
-                    <Col className='ab' lg="12">
-                    <Button>DETALIS</Button>
-                    </Col>
-                  </Row>
-              
-              </Col>
-             </Row>
-                    
-</Card>
-               </>
-            )
-        
-            })}</Row>) 
+        {ispending && (
+          <Row>
+            {" "}
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          </Row>
+        )}
 
-            // Card-ends
-            : (<Row>{<h3>Loading...!</h3>}</Row>)
-       }
-       </Row> 
+        {list.length !== 0 ? (
+          // Card -Start
+          <Row className="m-3">
+            {diff.map((items, key) => {
+              return (
+                <>
+                  <Card className="m-2 mfull p-5">
+                    <Row>
+                      <Col lg="4" sm="6" className="ch mb-4">
+                        <Card className="h-100 p-0 mfullcar">
+                          <Card.Img
+                            className="h-100"
+                            src={`https://image.tmdb.org/t/p/original${items.backdrop_path}`}
+                            alt="Card image"
+                          />
 
+                          <Card.ImgOverlay>
+                            <Row className="hh">
+                              {/* 1 */}
+                              <Col lg="12 d-flex justify-content-center  ca align-items-center">
+                                <Button
+                                  pill
+                                  className="butt"
+                                  variant="dark"
+                                  onClick={async () => {
+                                    const { data } = await Servises.getvideos(
+                                      items.id
+                                    );
 
-        
-    );
+                                    setmodalstate(0);
+                                    setshow(!show);
+                                    setpending(() => {
+                                      setvideo(data.results[0].key);
+                                    });
+                                  }}
+                                >
+                                  <CiPlay1 style={{color:"white"}} />
+                                </Button>
+                              </Col>
+
+                              {/* 2 */}
+                            </Row>
+                            <Row className="lol">
+                              <Col lg="4" className="attributes">
+                                <h4 className="ffonts">
+                                  <SlLike />
+                                  <span>
+                                    <h6>{items.vote_count}</h6>
+                                  </span>
+                                </h4>
+                              </Col>
+                              <Col lg="4" className="attributes">
+                                <h4 className="ffonts">
+                                  <AiOutlineHeart />
+                                </h4>
+                              </Col>
+                              <Col lg="4" className="attributes">
+                                <h4 className="ffonts">
+                                  <FiShare2 />{" "}
+                                </h4>
+                              </Col>
+                            </Row>
+                          </Card.ImgOverlay>
+                        </Card>
+                      </Col>
+
+                      {/* 1 */}
+
+                      {/* 2 */}
+                      <Col lg="8" sm="6">
+                        <Row className="p-4">
+                          <Col className="ab" lg="12">
+                            <h1 className="ffonts">{items.original_title}</h1>
+                          </Col>
+                          <Col className="ab" lg="12">
+                            <p className="ffonts"> {items.overview}</p>
+                          </Col>
+                          <Col className="ab" lg="12">
+                            <Button
+                              onClick={() => {
+                                setmodalstate(1);
+                                setshow(!show);
+                              }}
+                            >
+                              DETALIS
+                            </Button>
+                          </Col>
+                        </Row>
+                      </Col>
+                    </Row>
+                  </Card>
+                </>
+              );
+            })}
+          </Row>
+        ) : (
+          // Card-ends
+          <Row>
+            {
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            }
+          </Row>
+        )}
+      </Row>
+
+      {modalstate === 0 && (
+        <Modals
+          show={show}
+          handleClose={handleClose}
+          Boady={<Movies/>}
+        />
+      )}
+      {modalstate === 1 && (
+        <Modals show={show} handleClose={handleClose} Boady={<MoviesDetails/>} />
+      )}
+    </>
+  );
 }
 
 export default MoviesFigure;
