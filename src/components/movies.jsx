@@ -23,6 +23,7 @@ function MoviesFigure() {
   const [ispending, setpending] = useTransition();
   const [search, setSearch] = useState("");
   const [videos, setvideo] = useState("NOpe");
+  const [Details,setDetails] = useState([])
 
   const [show, setshow] = useState(false);
 
@@ -49,8 +50,20 @@ function MoviesFigure() {
   const MoviesDetails = useCallback(
     () => (
       <>
-        <Row>
-          <h1>Details will be done</h1>
+        <Row >
+        <Card className="h-100 p-0 mfullcarD">
+                          <Card.Img
+                            className="h-100"
+                            src={`https://image.tmdb.org/t/p/original${Details.backdrop_path}`}
+                            alt="Card image"
+                          />
+                          <Card.ImgOverlay>
+                            <Row className="lol">
+                              
+                            </Row>
+                          </Card.ImgOverlay>
+                        </Card>
+
         </Row>
       </>
     ),
@@ -211,7 +224,10 @@ function MoviesFigure() {
                           </Col>
                           <Col className="ab" lg="12">
                             <Button
-                              onClick={() => {
+                              onClick={async() => {
+                                const {data} = await Servises.getDetails(items.id)
+                                console.log(data)
+                                setDetails(data)
                                 setmodalstate(1);
                                 setshow(!show);
                               }}

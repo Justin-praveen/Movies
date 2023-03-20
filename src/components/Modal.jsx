@@ -3,11 +3,11 @@ import { Modal } from 'react-bootstrap'
 
 const Modals = ({Boady,show,handleClose}) => {
   return (
-    <div>
+    <div style={{width:"100%"}}>
       <Modal show={show} onHide={handleClose}  className="l" centered>
         <Modal.Header closeButton>
         </Modal.Header>
-        <Modal.Body>{Boady}</Modal.Body>
+        <Modal.Body className='l'>{Boady}</Modal.Body>
       </Modal>
     </div>
   )

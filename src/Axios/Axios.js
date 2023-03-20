@@ -40,10 +40,16 @@ export class Servises {
         })
     }
     static getvideos(payload){
-        // https://api.themoviedb.org/3/movie/{movie_id}/videos?api_key=<<api_key>>&language=en-US
-
-        https://api.themoviedb.org/3/movie/{movie_id}/watch/providers?api_key=<<api_key>>
         return axios.get(`${Url}/movie/${payload}/videos`,{
+            params: {
+                api_key: '1e448e0dfcdbb565f5d329820065b4d2',
+            }
+        })
+    }
+
+    static getDetails(payload){
+    
+        return axios.get(`${Url}/movie/${payload}`,{
             params: {
                 api_key: '1e448e0dfcdbb565f5d329820065b4d2',
             }
