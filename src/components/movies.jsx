@@ -232,7 +232,7 @@ function MoviesFigure() {
                                 setshow(!show);
                               }}
                             >
-                              DETALIS
+                              Details
                             </Button>
                           </Col>
                         </Row>
